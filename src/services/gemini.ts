@@ -74,7 +74,8 @@ export async function* forgePromptStream(
     const config = {
       systemPrompt: localStorage.getItem('admin_system_prompt') || SYSTEM_PROMPT,
       model: localStorage.getItem('admin_model') || model,
-      temp: parseFloat(localStorage.getItem('admin_temp') || '0.7')
+      temp: parseFloat(localStorage.getItem('admin_temp') || '0.7'),
+      topP: parseFloat(localStorage.getItem('admin_top_p') || '0.9')
     };
 
     const parts: any[] = [{
@@ -97,7 +98,7 @@ export async function* forgePromptStream(
       contents: [{ role: "user", parts }],
       config: {
         temperature: config.temp,
-        topP: 0.95,
+        topP: config.topP,
       }
     });
 
@@ -140,16 +141,21 @@ export async function* refinePromptStream(
   const startTime = Date.now();
   let fullOutput = "";
   try {
+    const config = {
+      model: localStorage.getItem('admin_model') || model,
+      temp: parseFloat(localStorage.getItem('admin_temp') || '0.7'),
+      topP: parseFloat(localStorage.getItem('admin_top_p') || '0.9')
+    };
+
     const chat = ai.chats.create({
-      model,
+      model: config.model,
       history: chatHistory.map(h => ({
-        role: h.role,
+        role: h.role as "user" | "model",
         parts: h.parts.map(p => ({ text: p.text }))
       })),
       config: {
-        temperature: 0.7,
-        topK: 40,
-        topP: 0.95,
+        temperature: config.temp,
+        topP: config.topP,
       },
     });
 

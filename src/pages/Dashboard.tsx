@@ -245,55 +245,49 @@ export default function Dashboard() {
         
         {/* LEFT WORKSPACE: INPUT */}
         <div className="flex flex-col gap-6 overflow-hidden">
-          <div 
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-            className={cn(
-              "glass-card flex-1 flex flex-col p-8 relative group border-white/5 bg-white/[0.02] transition-all duration-300",
-              isDragging && "border-blue-500/50 bg-blue-500/5 scale-[1.01]"
-            )}
-          >
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-2 text-white/20">
-                <Settings2 className="w-4 h-4" />
-                <span className="text-[10px] font-black uppercase tracking-[0.2em]">Input Intent</span>
-              </div>
-              <div className="flex items-center gap-2">
-                {image && (
-                  <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/20 text-[9px] px-2">
-                    IMAGE ATTACHED
-                  </Badge>
-                )}
-                <button 
-                  onClick={() => fileInputRef.current?.click()}
-                  className={cn(
-                    "flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all",
-                    image ? "bg-blue-500 text-white" : "bg-white/5 text-white/40 hover:text-blue-400"
+            <div 
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              className={cn(
+                "glass-card flex-1 flex flex-col p-8 relative group border-white/5 bg-white/[0.02] transition-all duration-300",
+                isDragging && "border-blue-500/50 bg-blue-500/5 scale-[1.01]"
+              )}
+            >
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-2 text-white/20">
+                  <Settings2 className="w-4 h-4" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em]">Input Intent</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  {image && (
+                    <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/20 text-[9px] px-2">
+                      IMAGE ATTACHED
+                    </Badge>
                   )}
-                >
-                  <ImageIcon className="w-3 h-3" />
-                  {image ? "Change Image" : "Attach Image"}
-                </button>
+                  <button 
+                    onClick={() => fileInputRef.current?.click()}
+                    className={cn(
+                      "flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all",
+                      image ? "bg-blue-500 text-white" : "bg-white/5 text-white/40 hover:text-blue-400"
+                    )}
+                  >
+                    <ImageIcon className="w-3 h-3" />
+                    {image ? "Change Image" : "Attach Image"}
+                  </button>
+                </div>
+                <input type="file" ref={fileInputRef} onChange={handleImageUpload} hidden accept="image/*" />
               </div>
-              <input type="file" ref={fileInputRef} onChange={handleImageUpload} hidden accept="image/*" />
-            </div>
-            
-            <Textarea
-              value={input}
-              onChange={handleInputChange}
-              placeholder="Describe your prompt requirements or paste raw ideas... (Try /role)"
-              className="flex-1 bg-transparent border-none focus-visible:ring-0 text-xl resize-none p-0 placeholder:text-white/5 font-medium leading-relaxed scrollbar-hide"
-            />
+              
+              <Textarea
+                value={input}
+                onChange={handleInputChange}
+                placeholder="Describe your prompt requirements or paste raw ideas... (Try /role)"
+                className="flex-1 bg-transparent border-none focus-visible:ring-0 text-xl resize-none p-0 placeholder:text-white/5 font-medium leading-relaxed scrollbar-hide"
+              />
 
-            <AnimatePresence>
               {showCommands && (
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  className="absolute bottom-20 left-8 right-8 glass p-2 rounded-2xl border border-white/10 z-50 shadow-2xl"
-                >
+                <div className="absolute bottom-20 left-8 right-8 glass p-2 rounded-2xl border border-white/10 z-50 shadow-2xl">
                   <div className="p-2 border-b border-white/5 mb-2">
                     <span className="text-[10px] font-black uppercase text-white/20 tracking-widest">Select Building Block</span>
                   </div>
@@ -313,18 +307,11 @@ export default function Dashboard() {
                       </button>
                     ))}
                   </div>
-                </motion.div>
+                </div>
               )}
-            </AnimatePresence>
 
-            <AnimatePresence>
               {image && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  className="mt-6 p-4 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-4 group/img relative"
-                >
+                <div className="mt-6 p-4 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-4 group/img relative">
                   <div className="relative">
                     <img 
                       src={`data:${image.mimeType};base64,${image.data}`} 
@@ -346,10 +333,9 @@ export default function Dashboard() {
                       Remove Attachment
                     </button>
                   </div>
-                </motion.div>
+                </div>
               )}
-            </AnimatePresence>
-          </div>
+            </div>
 
           <div className="flex gap-4">
              <motion.div 
@@ -428,137 +414,163 @@ export default function Dashboard() {
             </div>
 
             <ScrollArea className="flex-1">
-            <AnimatePresence mode="wait">
-              {!result && !isGenerating ? (
-                <motion.div 
-                  key="empty"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  className="h-[300px] flex flex-col items-center justify-center text-white/5 text-center space-y-6"
-                >
-                  <div className="w-20 h-20 rounded-full border border-dashed border-white/10 flex items-center justify-center">
-                    <Layers className="w-10 h-10 opacity-20" />
-                  </div>
-                  <p className="font-display text-sm font-medium">Ready for input commands</p>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="output"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="space-y-8"
-                >
-                  {result && (
-                    <motion.div 
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="font-mono text-sm leading-relaxed text-white/70 whitespace-pre-wrap selection:bg-blue-500/20 selection:text-white"
-                    >
-                      {result}
-                    </motion.div>
-                  )}
-
-                  {auditResult && (
-                    <motion.div 
-                      key="audit"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="p-8 rounded-3xl bg-blue-500/5 border border-blue-500/10 space-y-6"
-                    >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3 text-blue-400">
-                        <ShieldCheck className="w-5 h-5" />
-                        <span className="text-[11px] font-black uppercase tracking-[0.2em]">Safety & Quality Node</span>
-                      </div>
-                      <Badge className="bg-blue-500/20 text-blue-400 border-none font-black text-xs">
-                        SCORE: {auditResult.score}/10
-                      </Badge>
+              <AnimatePresence mode="wait">
+                {!result && !isGenerating ? (
+                  <motion.div 
+                    key="empty"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className="h-[300px] flex flex-col items-center justify-center text-white/5 text-center space-y-6"
+                  >
+                    <div className="w-20 h-20 rounded-full border border-dashed border-white/10 flex items-center justify-center">
+                      <Layers className="w-10 h-10 opacity-20" />
                     </div>
+                    <p className="font-display text-sm font-medium">Ready for input commands</p>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="output"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="space-y-8"
+                  >
+                    {isGenerating && !result && (
+                      <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="flex items-center justify-center py-20"
+                      >
+                        <RefreshCw className="w-10 h-10 text-blue-500/20 animate-spin" />
+                      </motion.div>
+                    )}
+                    
+                    {result && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="font-mono text-sm leading-relaxed text-white/70 whitespace-pre-wrap selection:bg-blue-500/20 selection:text-white"
+                      >
+                        {result}
+                      </motion.div>
+                    )}
 
-                    <div className="grid grid-cols-3 gap-4 pb-4 border-b border-white/5">
-                      {Object.entries(auditResult.metrics || {}).map(([key, val]) => (
-                        <div key={key} className="space-y-1">
-                          <p className="text-[8px] text-white/20 uppercase font-black">{key}</p>
-                          <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-                             <div 
-                               className="h-full bg-blue-500 transition-all duration-1000" 
-                               style={{ width: `${(val as number) * 10}%` }} 
-                             />
+                    {auditResult && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="p-8 rounded-3xl bg-blue-500/5 border border-blue-500/10 space-y-6"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3 text-blue-400">
+                            <ShieldCheck className="w-5 h-5" />
+                            <span className="text-[11px] font-black uppercase tracking-[0.2em]">Safety & Quality Node</span>
                           </div>
+                          <Badge className="bg-blue-500/20 text-blue-400 border-none font-black text-xs">
+                            SCORE: {auditResult.score}/10
+                          </Badge>
                         </div>
-                      ))}
-                    </div>
 
-                    <div className="space-y-2">
-                       <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Verdict</p>
-                       <p className="text-xs text-white/70 leading-relaxed italic">"{auditResult.verdict}"</p>
-                    </div>
+                        <div className="grid grid-cols-3 gap-4 pb-4 border-b border-white/5">
+                          {Object.entries(auditResult.metrics || {}).map(([key, val]) => (
+                            <div key={key} className="space-y-1">
+                              <p className="text-[8px] text-white/20 uppercase font-black">{key}</p>
+                              <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                                 <motion.div 
+                                   initial={{ width: 0 }}
+                                   animate={{ width: `${(val as number) * 10}%` }}
+                                   transition={{ duration: 1, ease: "easeOut" }}
+                                   className="h-full bg-blue-500" 
+                                 />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
 
-                    <div className="space-y-3">
-                       <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Enhancements</p>
-                       <ul className="space-y-2">
-                         {auditResult.tips.map((tip, i) => (
-                           <li key={i} className="text-[11px] text-white/50 flex gap-3">
-                             <span className="text-blue-500/40">0{i+1}</span>
-                             {tip}
-                           </li>
-                         ))}
-                       </ul>
-                    </div>
+                        <div className="space-y-2">
+                           <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Verdict</p>
+                           <p className="text-xs text-white/70 leading-relaxed italic">"{auditResult.verdict}"</p>
+                        </div>
+
+                        <div className="space-y-3">
+                           <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Enhancements</p>
+                           <ul className="space-y-2">
+                             {auditResult.tips.map((tip, i) => (
+                               <motion.li 
+                                 key={i}
+                                 initial={{ opacity: 0, x: -10 }}
+                                 animate={{ opacity: 1, x: 0 }}
+                                 transition={{ delay: i * 0.1 }}
+                                 className="text-[11px] text-white/50 flex gap-3"
+                               >
+                                 <span className="text-blue-500/40">0{i+1}</span>
+                                 {tip}
+                               </motion.li>
+                             ))}
+                           </ul>
+                        </div>
+                      </motion.div>
+                    )}
+
+                    {telemetry && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-4"
+                      >
+                        <div className="flex items-center gap-2 text-white/10">
+                          <Terminal className="w-3 h-3" />
+                          <span className="text-[9px] font-black uppercase tracking-[0.3em]">Telemetry Stream</span>
+                        </div>
+                        <div className="grid grid-cols-3 gap-8">
+                           <div className="space-y-1">
+                             <span className="text-[8px] text-white/20 uppercase font-black">Latency</span>
+                             <p className="text-[10px] font-mono text-white/60">{telemetry.latency}ms</p>
+                           </div>
+                           <div className="space-y-1">
+                             <span className="text-[8px] text-white/20 uppercase font-black">Est. Tokens</span>
+                             <p className="text-[10px] font-mono text-white/60">{telemetry.tokens}</p>
+                           </div>
+                           <div className="space-y-1">
+                             <span className="text-[8px] text-white/20 uppercase font-black">Status</span>
+                             <p className="text-[10px] font-mono text-green-500/60">{telemetry.status}</p>
+                           </div>
+                        </div>
+                      </motion.div>
+                    )}
+
+                    <motion.div 
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.5 }}
+                      className="p-8 rounded-3xl border border-white/5 bg-white/[0.01] space-y-4"
+                    >
+                      <div className="flex items-center gap-3 text-white/20">
+                        <Info className="w-4 h-4" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.3em]">Operational Framework</span>
+                      </div>
+                      <div className="space-y-3">
+                        <p className="text-xs text-white/40 leading-relaxed font-medium">
+                          PromptForge utilizes a <span className="text-blue-400">multi-layer engineering cycle</span> to ensure maximum model alignment:
+                        </p>
+                        <div className="grid grid-cols-2 gap-3">
+                           {[
+                             { l: "Role", d: "Strategic persona assignment" },
+                             { l: "Context", d: "Environmental constraints" },
+                             { l: "Task", d: "Primary objective logic" },
+                             { l: "Output", d: "Structural markdown formatting" }
+                           ].map((item, i) => (
+                             <div key={i} className="p-3 bg-black/40 rounded-xl border border-white/5">
+                                <p className="text-[9px] font-black uppercase text-blue-500/60 mb-1">{item.l}</p>
+                                <p className="text-[10px] text-white/30 font-bold">{item.d}</p>
+                             </div>
+                           ))}
+                        </div>
+                      </div>
+                    </motion.div>
                   </motion.div>
                 )}
-
-                {telemetry && (
-                  <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-4">
-                    <div className="flex items-center gap-2 text-white/10">
-                      <Terminal className="w-3 h-3" />
-                      <span className="text-[9px] font-black uppercase tracking-[0.3em]">Telemetry Stream</span>
-                    </div>
-                    <div className="grid grid-cols-3 gap-8">
-                       <div className="space-y-1">
-                         <span className="text-[8px] text-white/20 uppercase font-black">Latency</span>
-                         <p className="text-[10px] font-mono text-white/60">{telemetry.latency}ms</p>
-                       </div>
-                       <div className="space-y-1">
-                         <span className="text-[8px] text-white/20 uppercase font-black">Est. Tokens</span>
-                         <p className="text-[10px] font-mono text-white/60">{telemetry.tokens}</p>
-                       </div>
-                       <div className="space-y-1">
-                         <span className="text-[8px] text-white/20 uppercase font-black">Status</span>
-                         <p className="text-[10px] font-mono text-green-500/60">{telemetry.status}</p>
-                       </div>
-                    </div>
-                  </div>
-                )}
-
-                <div className="p-8 rounded-3xl border border-white/5 bg-white/[0.01] space-y-4">
-                  <div className="flex items-center gap-3 text-white/20">
-                    <Info className="w-4 h-4" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.3em]">Operational Framework</span>
-                  </div>
-                  <div className="space-y-3">
-                    <p className="text-xs text-white/40 leading-relaxed font-medium">
-                      PromptForge utilizes a <span className="text-blue-400">multi-layer engineering cycle</span> to ensure maximum model alignment:
-                    </p>
-                    <div className="grid grid-cols-2 gap-3">
-                       {[
-                         { l: "Role", d: "Strategic persona assignment" },
-                         { l: "Context", d: "Environmental constraints" },
-                         { l: "Task", d: "Primary objective logic" },
-                         { l: "Output", d: "Structural markdown formatting" }
-                       ].map((item, i) => (
-                         <div key={i} className="p-3 bg-black/40 rounded-xl border border-white/5">
-                            <p className="text-[9px] font-black uppercase text-blue-500/60 mb-1">{item.l}</p>
-                            <p className="text-[10px] text-white/30 font-bold">{item.d}</p>
-                         </div>
-                       ))}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-            </AnimatePresence>
+              </AnimatePresence>
             </ScrollArea>
           </div>
           

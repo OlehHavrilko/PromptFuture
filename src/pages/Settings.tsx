@@ -149,11 +149,11 @@ export default function Settings() {
           desc: "Configure OpenAI, Anthropic, and OpenRouter integration.",
           action: (
             <Dialog>
-              <DialogTrigger render={
+              <DialogTrigger>
                 <Button variant="outline" size="sm" className="bg-white/5 border-white/10 text-[10px] font-black h-8 hover:bg-white/10 hover:text-blue-400">
                   MANAGE KEYS
                 </Button>
-              } />
+              </DialogTrigger>
               <DialogContent className="glass border-white/10 bg-black/95 text-white max-w-md">
                 <DialogHeader>
                   <DialogTitle className="flex items-center gap-2 text-xl font-display font-bold">
@@ -281,7 +281,8 @@ export default function Settings() {
         </Badge>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 overflow-y-auto pr-4 -mr-4 pb-20 scrollbar-hide">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 overflow-y-auto pr-4 -mr-4 pb-20 scrollbar-hide">
+        <AnimatePresence>
         {sections.map((section, idx) => (
           <motion.div 
             key={idx}
@@ -308,6 +309,7 @@ export default function Settings() {
             </div>
           </motion.div>
         ))}
+        </AnimatePresence>
 
         {/* Global Stats Footer */}
         <div className="col-span-full mt-10 glass p-8 rounded-3xl border-white/5 bg-white/[0.01] flex items-center justify-between">

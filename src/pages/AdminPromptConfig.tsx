@@ -49,12 +49,14 @@ export default function AdminPromptConfig() {
   const [config, setConfig] = useState({
     systemPrompt: localStorage.getItem('admin_system_prompt') || DEFAULT_SYSTEM_PROMPT,
     temperature: localStorage.getItem('admin_temp') || '0.7',
+    topP: localStorage.getItem('admin_top_p') || '0.9',
     model: localStorage.getItem('admin_model') || 'gemini-1.5-flash',
   });
 
   const handleSave = () => {
     localStorage.setItem('admin_system_prompt', config.systemPrompt);
     localStorage.setItem('admin_temp', config.temperature);
+    localStorage.setItem('admin_top_p', config.topP);
     localStorage.setItem('admin_model', config.model);
     toast.success("Neural configuration updated globally");
     window.location.reload(); // Reload to ensure services pick up new config
@@ -64,6 +66,7 @@ export default function AdminPromptConfig() {
     setConfig({
       systemPrompt: DEFAULT_SYSTEM_PROMPT,
       temperature: '0.7',
+      topP: '0.9',
       model: 'gemini-1.5-flash'
     });
     toast.info("Settings reset to factory defaults");
@@ -130,7 +133,9 @@ export default function AdminPromptConfig() {
                     >
                        <option value="gemini-1.5-flash">Gemini 1.5 Flash (Performance)</option>
                        <option value="gemini-1.5-pro">Gemini 1.5 Pro (Reasoning)</option>
-                       <option value="gemini-2.0-flash">Gemini 2.0 Flash (Bleeding Edge)</option>
+                       <option value="gemini-2.0-flash">Gemini 2.0 Flash (Experimental)</option>
+                       <option value="gemini-2.0-pro-exp-02-05">Gemini 2.0 Pro (Elite)</option>
+                       <option value="gemini-2.0-flash-thinking-exp">Gemini 2.0 Thinking (Reasoning Focus)</option>
                     </select>
                  </div>
 
@@ -143,14 +148,34 @@ export default function AdminPromptConfig() {
                       type="range" 
                       min="0" 
                       max="1" 
-                      step="0.1" 
+                      step="0.05" 
                       value={config.temperature}
                       onChange={(e) => setConfig({...config, temperature: e.target.value})}
-                      className="w-full accent-amber-500 bg-white/5 h-2 rounded-full appearance-none"
+                      className="w-full accent-amber-500 bg-white/5 h-2 rounded-full appearance-none transition-all hover:scale-[1.02]"
                     />
                     <div className="flex justify-between text-[8px] font-black text-white/10 uppercase tracking-widest mt-1">
                        <span>Deterministic</span>
                        <span>Creative</span>
+                    </div>
+                 </div>
+
+                 <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                       <label className="text-[10px] font-black text-white/20 uppercase tracking-widest">Top-P (Nucleus)</label>
+                       <span className="text-xs font-mono text-blue-500 font-bold">{config.topP}</span>
+                    </div>
+                    <input 
+                      type="range" 
+                      min="0" 
+                      max="1" 
+                      step="0.05" 
+                      value={config.topP}
+                      onChange={(e) => setConfig({...config, topP: e.target.value})}
+                      className="w-full accent-blue-500 bg-white/5 h-2 rounded-full appearance-none transition-all hover:scale-[1.02]"
+                    />
+                    <div className="flex justify-between text-[8px] font-black text-white/10 uppercase tracking-widest mt-1">
+                       <span>Focused</span>
+                       <span>Diverse</span>
                     </div>
                  </div>
               </div>

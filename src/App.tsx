@@ -17,7 +17,7 @@ import Placeholder from '@/pages/Placeholder';
 import { ThemeProvider } from 'next-themes';
 import { Toaster } from '@/components/ui/sonner';
 import '@/i18n/config';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '@/lib/utils';
 import { useTheme } from 'next-themes';
 
@@ -41,23 +41,34 @@ function AppLayout() {
         "flex-1 transition-all duration-700 min-h-screen overflow-y-auto atmosphere relative",
         !isLanding && "ml-64"
       )}>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/forge" element={<Dashboard />} />
-          <Route path="/chat" element={<PromptChat />} />
-          <Route path="/history" element={<History />} />
-          <Route path="/saved" element={<SavedPrompts />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/vision" element={<VisionAnalyzer />} />
-          <Route path="/text-tools" element={<Placeholder title="Core Utilities" />} />
-          <Route path="/templates" element={<Templates />} />
-          <Route path="/admin/observability" element={<AdminObservability />} />
-          <Route path="/admin/diff" element={<AdminPromptDiff />} />
-          <Route path="/admin/config" element={<AdminPromptConfig />} />
-          <Route path="/playground" element={<PromptPlayground />} />
-          <Route path="/my-templates" element={<Placeholder title="Private Laboratory" />} />
-          <Route path="/marketplace" element={<Placeholder title="Global Marketplace" />} />
-        </Routes>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="w-full h-full"
+          >
+            <Routes location={location}>
+              <Route path="/" element={<Landing />} />
+              <Route path="/forge" element={<Dashboard />} />
+              <Route path="/chat" element={<PromptChat />} />
+              <Route path="/history" element={<History />} />
+              <Route path="/saved" element={<SavedPrompts />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/vision" element={<VisionAnalyzer />} />
+              <Route path="/text-tools" element={<Placeholder title="Core Utilities" />} />
+              <Route path="/templates" element={<Templates />} />
+              <Route path="/admin/observability" element={<AdminObservability />} />
+              <Route path="/admin/diff" element={<AdminPromptDiff />} />
+              <Route path="/admin/config" element={<AdminPromptConfig />} />
+              <Route path="/playground" element={<PromptPlayground />} />
+              <Route path="/my-templates" element={<Placeholder title="Private Laboratory" />} />
+              <Route path="/marketplace" element={<Placeholder title="Global Marketplace" />} />
+            </Routes>
+          </motion.div>
+        </AnimatePresence>
       </main>
     </div>
   );
