@@ -245,22 +245,29 @@ export default function Settings() {
       ]
     },
     {
-      title: "Security & Keys",
+      title: "System Integrity",
       icon: Lock,
       items: [
         {
-          label: "API Access Key",
-          desc: "Custom OpenRouter or Anthropic keys (BYOK).",
-          action: (
-            <Button variant="outline" size="sm" className="bg-white/5 border-white/10 text-[10px] font-black h-8">
-              CONFIGURE
-            </Button>
-          )
+          label: "Telemetry stream",
+          desc: "Allow system diagnostics for engine evolution.",
+          action: <Switch defaultChecked />
         },
         {
-          label: "System Logs",
-          desc: "Allow telemetry for engine evolution.",
-          action: <Switch defaultChecked />
+          label: "Audit Level",
+          desc: "Set the sensitivity of the Safety & Quality Node.",
+          action: (
+            <Select defaultValue="standard">
+              <SelectTrigger className="w-32 bg-white/5 border-white/10 text-xs font-bold">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="glass border-white/10 bg-black">
+                <SelectItem value="strict">Paranoid (Strict)</SelectItem>
+                <SelectItem value="standard">Standard</SelectItem>
+                <SelectItem value="relaxed">Relaxed</SelectItem>
+              </SelectContent>
+            </Select>
+          )
         }
       ]
     }
