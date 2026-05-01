@@ -29,6 +29,14 @@ export default function Dashboard() {
   const [auditResult, setAuditResult] = useState<{ score: number; verdict: string; tips: string[]; metrics: any } | null>(null);
   const [telemetry, setTelemetry] = useState<{ latency: number; tokens: number; status: string } | null>(null);
   const [copied, setCopied] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
   
   // Settings
   const [length, setLength] = useState<'short' | 'medium' | 'long'>('medium');
@@ -209,27 +217,30 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="h-screen flex flex-col pt-8 pb-4 px-10 overflow-hidden atmosphere">
+    <div className={cn(
+      "flex flex-col pt-4 md:pt-8 pb-4 px-4 md:px-10 atmosphere",
+      isMobile ? "min-h-screen overflow-y-auto" : "h-screen overflow-hidden"
+    )}>
       {/* Workspace Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 md:mb-8 gap-4">
         <div className="space-y-1">
-          <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/20 px-2 py-0 text-[9px] font-black uppercase tracking-widest">
+          <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/20 px-2 py-0 text-[10px] font-black uppercase tracking-widest">
             Laboratory Environment v1.2
           </Badge>
-          <h2 className="text-3xl font-display font-bold tracking-tight text-white flex items-center gap-3">
-             <Sparkles className="text-blue-500 w-8 h-8" />
+          <h2 className="text-2xl md:text-3xl font-display font-bold tracking-tight text-white flex items-center gap-3">
+             <Sparkles className="text-blue-500 w-6 h-6 md:w-8 md:h-8" />
              Core Generator
           </h2>
         </div>
         
         <div className="flex gap-4">
-          <div className="flex bg-white/5 rounded-2xl p-1 gap-1 border border-white/5 overflow-hidden">
+          <div className="flex bg-white/5 rounded-2xl p-1 gap-1 border border-white/5 overflow-hidden w-full sm:w-auto">
             {(['short', 'medium', 'long'] as const).map((l) => (
               <button 
                 key={l}
                 onClick={() => setLength(l)}
                 className={cn(
-                  "px-4 py-2 rounded-xl text-[10px] font-black transition-all uppercase tracking-widest",
+                  "flex-1 sm:flex-none px-3 md:px-4 py-2 rounded-xl text-[10px] font-black transition-all uppercase tracking-widest",
                   length === l ? "bg-white/10 text-white shadow-lg" : "text-white/30 hover:text-white/60"
                 )}
               >
@@ -241,16 +252,19 @@ export default function Dashboard() {
       </div>
 
       {/* Main Split Pane Workspace */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-10 overflow-hidden mb-8">
+      <div className={cn(
+        "flex-1 grid gap-6 md:gap-10 mb-8",
+        isMobile ? "grid-cols-1" : "grid-cols-2 overflow-hidden"
+      )}>
         
         {/* LEFT WORKSPACE: INPUT */}
-        <div className="flex flex-col gap-6 overflow-hidden">
+        <div className={cn("flex flex-col gap-6", !isMobile && "overflow-hidden")}>
             <div 
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
               className={cn(
-                "glass-card flex-1 flex flex-col p-8 relative group border-white/5 bg-white/[0.02] transition-all duration-300",
+                "glass-card flex-1 flex flex-col p-6 md:p-8 relative group border-white/5 bg-white/[0.02] transition-all duration-300 min-h-[300px]",
                 isDragging && "border-blue-500/50 bg-blue-500/5 scale-[1.01]"
               )}
             >
@@ -388,9 +402,12 @@ export default function Dashboard() {
         </div>
 
         {/* RIGHT WORKSPACE: OUTPUT */}
-        <div className="glass-card flex flex-col p-0 overflow-hidden relative border-white/10 bg-white/[0.01]">
+        <div className={cn(
+          "glass-card flex flex-col p-0 relative border-white/10 bg-white/[0.01] min-h-[300px]",
+          !isMobile && "overflow-hidden"
+        )}>
           <div className="flex-1 flex flex-col min-h-0">
-            <div className="px-8 py-6 border-b border-white/5 flex items-center justify-between">
+            <div className="px-6 md:px-8 py-4 md:py-6 border-b border-white/5 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
                 <h3 className="text-[10px] font-black text-white/40 uppercase tracking-[0.25em]">Output Blueprint</h3>
@@ -592,12 +609,15 @@ export default function Dashboard() {
       </div>
 
       {/* FOOTER: QUICK TEMPLATES */}
-      <div className="h-44 flex flex-col">
+      <div className={cn("flex flex-col", isMobile ? "mt-4 h-auto pb-10" : "h-44")}>
         <div className="px-2 mb-4 flex items-center justify-between">
            <h4 className="text-[10px] font-black text-white/20 uppercase tracking-[0.3em]">Quick Forge Templates</h4>
-           <button className="text-[10px] font-bold text-blue-500/60 hover:text-blue-400 underline decoration-blue-500/20 underline-offset-4">Browse Marketplace</button>
+           <button className="text-[10px] font-bold text-blue-500/60 hover:text-blue-400 underline decoration-blue-500/20 underline-offset-4">Browse</button>
         </div>
-        <div className="grid grid-cols-4 gap-6">
+        <div className={cn(
+          "grid gap-4 md:gap-6",
+          isMobile ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-4"
+        )}>
           {templates.map((t, i) => (
             <motion.button 
               key={i}

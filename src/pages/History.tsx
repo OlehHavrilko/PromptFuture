@@ -9,12 +9,21 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 export default function History() {
   const navigate = useNavigate();
   const history = useStore(state => state.history);
   const clearHistory = useStore(state => state.clearHistory);
   const [search, setSearch] = React.useState('');
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const filtered = history.filter(h => 
     h.input.toLowerCase().includes(search.toLowerCase()) || 
@@ -22,30 +31,33 @@ export default function History() {
   ).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
   return (
-    <div className="h-screen flex flex-col p-10 atmosphere overflow-hidden">
-      <div className="flex items-center justify-between mb-10">
+    <div className={cn(
+      "flex flex-col p-4 md:p-10 atmosphere",
+      isMobile ? "min-h-screen overflow-y-auto pb-24" : "h-screen overflow-hidden"
+    )}>
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 md:mb-10 gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2 text-white/20 mb-2">
             <Clock className="w-4 h-4" />
             <span className="text-[10px] font-black uppercase tracking-[0.2em]">Sequence Log</span>
           </div>
-          <h2 className="text-4xl font-display font-bold text-white">Generation History</h2>
+          <h2 className="text-3xl md:text-4xl font-display font-bold text-white tracking-tight">Generation History</h2>
         </div>
         
-        <div className="flex items-center gap-4">
-          <div className="relative w-64">
+        <div className="flex flex-col sm:flex-row items-center gap-4">
+          <div className="relative w-full sm:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
             <Input 
               placeholder="Search sequences..." 
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-10 h-11 bg-white/5 border-white/5 rounded-xl text-xs font-medium focus:ring-blue-500/20"
+              className="pl-10 h-11 bg-white/5 border-white/5 rounded-xl text-xs font-medium focus:ring-blue-500/20 w-full"
             />
           </div>
           <Button 
             variant="ghost" 
             onClick={clearHistory}
-            className="h-11 px-6 rounded-xl text-red-500/60 hover:text-red-400 hover:bg-red-500/10 text-xs font-bold"
+            className="h-11 px-6 rounded-xl text-red-500/60 hover:text-red-400 hover:bg-red-500/10 text-xs font-bold w-full sm:w-auto"
           >
             <Trash2 className="w-4 h-4 mr-2" />
             Purge Log

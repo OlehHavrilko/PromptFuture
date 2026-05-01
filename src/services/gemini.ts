@@ -73,7 +73,7 @@ export async function* forgePromptStream(
   try {
     const config = {
       systemPrompt: localStorage.getItem('admin_system_prompt') || SYSTEM_PROMPT,
-      model: localStorage.getItem('admin_model') || model,
+      model: localStorage.getItem('admin_model') || (model === 'gemini-1.5-flash' ? 'gemini-3-flash-preview' : model),
       temp: parseFloat(localStorage.getItem('admin_temp') || '0.7'),
       topP: parseFloat(localStorage.getItem('admin_top_p') || '0.9')
     };
@@ -142,7 +142,7 @@ export async function* refinePromptStream(
   let fullOutput = "";
   try {
     const config = {
-      model: localStorage.getItem('admin_model') || model,
+      model: localStorage.getItem('admin_model') || (model === 'gemini-1.5-flash' ? 'gemini-3-flash-preview' : model),
       temp: parseFloat(localStorage.getItem('admin_temp') || '0.7'),
       topP: parseFloat(localStorage.getItem('admin_top_p') || '0.9')
     };
@@ -193,12 +193,27 @@ export async function* refinePromptStream(
 }
 
 export async function auditPrompt(promptText: string, model: string = "gemini-1.5-flash") {
+  // Try to use the edge function first
+  try {
+    const response = await fetch('/api/score-prompt', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: promptText })
+    });
+    if (response.ok) {
+      return await response.json();
+    }
+  } catch (err) {
+    console.warn("Edge function scoring failed, falling back to client-side", err);
+  }
+
+  // Fallback to client-side scoring
   const startTime = Date.now();
   try {
     const result = await ai.models.generateContent({
-      model,
+      model: model === 'gemini-1.5-flash' ? 'gemini-3-flash-preview' : model,
       contents: [
-        { text: `As an AI Prompt Quality Judge, audit the following blueprint for clarity, specificity, and actionability.
+        { role: "user", parts: [{ text: `As an AI Prompt Quality Judge, audit the following blueprint for clarity, specificity, and actionability.
       
       PROMPT TO AUDIT:
       ${promptText}
@@ -209,7 +224,7 @@ export async function auditPrompt(promptText: string, model: string = "gemini-1.
         "metrics": { "clarity": 0-10, "specificity": 0-10, "logic": 0-10 },
         "tips": ["Tip 1", "Tip 2", "Tip 3"],
         "verdict": "Brief professional summary"
-      }` }
+      }` }] }
       ]
     });
     

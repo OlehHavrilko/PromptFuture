@@ -1,11 +1,21 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, ArrowRight, ShieldCheck, Zap, Cpu, Globe, Layers } from 'lucide-react';
+import { Sparkles, ArrowRight, ShieldCheck, Zap, Cpu, Globe, Layers, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/lib/AuthContext';
 
 export default function Landing() {
   const navigate = useNavigate();
+  const { user, signIn, loading } = useAuth();
+
+  const handleEntry = () => {
+    if (user) {
+      navigate('/forge');
+    } else {
+      signIn();
+    }
+  };
 
   return (
     <div className="min-h-screen bg-black relative overflow-hidden flex flex-col items-center justify-center px-6 selection:bg-blue-500/30">
@@ -32,7 +42,7 @@ export default function Landing() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.2, ease: "circOut" }}
-            className="text-7xl md:text-[140px] font-display font-bold tracking-tighter leading-[0.8] text-white"
+            className="text-5xl sm:text-7xl md:text-[140px] font-display font-bold tracking-tighter leading-[0.8] text-white"
           >
             FORGE THE <br />
             <span className="bg-gradient-to-r from-blue-400 via-indigo-400 to-blue-400 bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
@@ -57,21 +67,37 @@ export default function Landing() {
            transition={{ duration: 0.8, delay: 0.6 }}
            className="flex flex-col sm:flex-row items-center justify-center gap-6"
         >
-          <Button 
-            size="lg"
-            onClick={() => navigate('/forge')}
-            className="h-20 px-16 rounded-3xl bg-white text-black hover:bg-white/90 text-2xl font-black transition-all hover:scale-105 active:scale-[0.98] shadow-[0_0_50px_rgba(255,255,255,0.15)] group"
-          >
-            Launch Lab
-            <ArrowRight className="ml-3 w-8 h-8 group-hover:translate-x-2 transition-transform" />
-          </Button>
+          {loading ? (
+            <div className="h-20 px-16 flex items-center gap-3">
+              <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+              <span className="text-white/40 font-bold uppercase tracking-widest text-xs">Validating Credentials</span>
+            </div>
+          ) : user ? (
+            <Button 
+              size="lg"
+              onClick={() => navigate('/forge')}
+              className="h-20 px-16 rounded-3xl bg-white text-black hover:bg-white/90 text-2xl font-black transition-all hover:scale-105 active:scale-[0.98] shadow-[0_0_50px_rgba(255,255,255,0.15)] group"
+            >
+              Enter Laboratory
+              <ArrowRight className="ml-3 w-8 h-8 group-hover:translate-x-2 transition-transform" />
+            </Button>
+          ) : (
+            <Button 
+              size="lg"
+              onClick={signIn}
+              className="h-20 px-16 rounded-3xl bg-blue-600 text-white hover:bg-blue-500 text-2xl font-black transition-all hover:scale-105 active:scale-[0.98] shadow-[0_0_50px_rgba(37,99,235,0.2)] group"
+            >
+              Secure Login
+              <LogIn className="ml-3 w-8 h-8 transition-transform group-hover:scale-110" />
+            </Button>
+          )}
           
           <Button 
             size="lg"
             variant="outline"
             className="h-20 px-12 rounded-3xl border-white/5 glass hover:bg-white/5 text-xl font-bold text-white/60 tracking-tight"
           >
-            View Specs
+            System Specs
           </Button>
         </motion.div>
 

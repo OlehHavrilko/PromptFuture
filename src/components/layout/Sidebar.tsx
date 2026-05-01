@@ -9,9 +9,12 @@ import {
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { motion } from 'motion/react';
+import { useAuth } from '@/lib/AuthContext';
+import { LogIn } from 'lucide-react';
 
 export function Sidebar() {
   const { t } = useTranslation();
+  const { user, signIn, logout, loading } = useAuth();
 
   const sections = [
     {
@@ -92,15 +95,60 @@ export function Sidebar() {
         ))}
       </div>
 
-      <div className="p-4 border-t border-white/5 space-y-2">
-        <NavLink to="/settings" className="tool-item text-xs">
+      <div className="p-4 border-t border-white/5 space-y-4">
+        {loading ? (
+          <div className="flex items-center gap-3 px-3 py-2 bg-white/5 rounded-xl border border-white/5 animate-pulse">
+            <div className="w-8 h-8 rounded-lg bg-white/10" />
+            <div className="space-y-1">
+              <div className="h-2 w-16 bg-white/10 rounded" />
+              <div className="h-1.5 w-24 bg-white/5 rounded" />
+            </div>
+          </div>
+        ) : user ? (
+          <div className="space-y-3">
+            <div className="flex items-center gap-3 px-3 py-2 bg-white/5 rounded-xl border border-white/5 overflow-hidden">
+              {user.photoURL ? (
+                <img src={user.photoURL} alt={user.displayName || ''} className="w-8 h-8 rounded-lg" />
+              ) : (
+                <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400 font-bold text-xs">
+                  {user.displayName?.[0] || user.email?.[0] || 'U'}
+                </div>
+              )}
+              <div className="min-w-0">
+                <p className="text-[10px] font-bold text-white truncate">{user.displayName || 'Pilot'}</p>
+                <p className="text-[8px] font-medium text-white/40 truncate">{user.email}</p>
+              </div>
+            </div>
+            <button 
+              onClick={logout}
+              className="group flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 w-full text-red-400/60 hover:text-red-400 hover:bg-red-500/10 text-xs font-semibold"
+            >
+              <LogOut className="w-4 h-4" />
+              {t('nav.logout')}
+            </button>
+          </div>
+        ) : (
+          <button 
+            onClick={signIn}
+            className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 transition-all duration-200 w-full text-white text-xs font-bold shadow-lg shadow-blue-500/20"
+          >
+            <LogIn className="w-4 h-4" />
+            SECURE LOGIN
+          </button>
+        )}
+        
+        <NavLink 
+          to="/settings" 
+          className={({ isActive }) =>
+            cn(
+              "group flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 text-xs font-semibold",
+              isActive ? "bg-white/10 text-white" : "text-white/40 hover:text-white hover:bg-white/5"
+            )
+          }
+        >
           <Settings className="w-4 h-4" />
           {t('nav.settings')}
         </NavLink>
-        <button className="tool-item text-xs w-full text-red-400 hover:bg-red-500/10">
-          <LogOut className="w-4 h-4" />
-          {t('nav.logout')}
-        </button>
       </div>
     </div>
   );

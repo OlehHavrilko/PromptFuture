@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Sidebar } from '@/components/layout/Sidebar';
+import { MobileNav } from '@/components/layout/MobileNav';
 import Landing from '@/pages/Landing';
 import Dashboard from '@/pages/Dashboard';
 import PromptChat from '@/pages/PromptChat';
@@ -20,6 +21,7 @@ import '@/i18n/config';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '@/lib/utils';
 import { useTheme } from 'next-themes';
+import { AuthProvider } from '@/lib/AuthContext';
 
 function AppLayout() {
   const location = useLocation();
@@ -29,17 +31,20 @@ function AppLayout() {
   return (
     <div className="flex min-h-screen bg-background text-foreground overflow-hidden selection:bg-blue-500/30 selection:text-white">
       {!isLanding && (
-        <motion.div 
-          initial={{ x: -260 }}
-          animate={{ x: 0 }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        >
-          <Sidebar />
-        </motion.div>
+        <div className="hidden md:block">
+          <motion.div 
+            initial={{ x: -260 }}
+            animate={{ x: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          >
+            <Sidebar />
+          </motion.div>
+        </div>
       )}
+      {!isLanding && <MobileNav />}
       <main className={cn(
-        "flex-1 transition-all duration-700 min-h-screen overflow-y-auto atmosphere relative",
-        !isLanding && "ml-64"
+        "flex-1 transition-all duration-700 min-h-screen overflow-y-auto atmosphere relative pb-20 md:pb-0",
+        !isLanding && "md:ml-64"
       )}>
         <AnimatePresence mode="wait">
           <motion.div
@@ -77,10 +82,12 @@ function AppLayout() {
 export default function App() {
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-      <Router>
-        <AppLayout />
-        <Toaster position="bottom-right" richColors />
-      </Router>
+      <AuthProvider>
+        <Router>
+          <AppLayout />
+          <Toaster position="bottom-right" richColors />
+        </Router>
+      </AuthProvider>
     </ThemeProvider>
   );
 }
